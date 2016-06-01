@@ -34,6 +34,14 @@ public class Artist implements Serializable {
 
     public Artist() {
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+    	if (obj instanceof Artist) {
+    		return ((Artist) obj).getName().toUpperCase().equals(name.toUpperCase());
+    	}
+    	return super.equals(obj);
+    }
 
     public String getName() {
         return name;
@@ -65,6 +73,11 @@ public class Artist implements Serializable {
 
     public void addMeta(String key, Object value) {
         meta.put(key, value);
+    }
+    
+    @Override
+    public String toString() {
+    	return name;
     }
     
     public HashMap<String, Object> getMeta() {

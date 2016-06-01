@@ -38,14 +38,14 @@ public class JTidyLoader {
      */
     public static void main(String[] args) {
         JTidyLoader jTidyLoader = new JTidyLoader();
-        List<Artist> artists = jTidyLoader.loadArtists("http://www.wacken.com/de/bands/bands-billing/");
+        List<Artist> artists = jTidyLoader.loadArtists();
         for (Artist artist : artists) {
             System.out.println(artist.getName());
         }
         jTidyLoader.loadGigs(artists, "http://www.wacken.com/de/bands/running-order/");
     }
 
-    private List<Artist> loadGigs(List<Artist> artists, String urlString) {
+    public List<Artist> loadGigs(List<Artist> artists, String urlString) {
         try {
             gigs = new ArrayList<Gig>();
             Tidy tidy = new Tidy();
@@ -53,22 +53,31 @@ public class JTidyLoader {
             InputStream openStream = url.openStream();
             Document document = tidy.parseDOM(openStream, System.out);
             loadGigs(document);
-            for (Gig gig : gigs) {
-                System.out.println(gig);
-            }
+//            for (Gig gig : gigs) {
+//                System.out.println(gig);
+//            }
             
-            Random rnd = new Random();
-            Gig g1;
-            Gig g2;
-            for (int i = 0; i < 120; i++) {
-                g1 = gigs.get(rnd.nextInt(gigs.size()));
-                g2 = gigs.get(rnd.nextInt(gigs.size()));
-                if (DateUtil.arePeriodsColiding(g1.getStartTime(), g1.getEndTime(), g2.getStartTime(), g2.getEndTime())) {
-                    System.out.println();
-                    System.err.println(g1);
-                    System.err.println(g2);
-                }
-            }
+//            Random rnd = new Random();
+//            Gig g1;
+//            Gig g2;
+//            for (int i = 0; i < 120; i++) {
+//                g1 = gigs.get(rnd.nextInt(gigs.size()));
+//                g2 = gigs.get(rnd.nextInt(gigs.size()));
+//                if (DateUtil.arePeriodsColiding(g1.getStartTime(), g1.getEndTime(), g2.getStartTime(), g2.getEndTime())) {
+//                    System.out.println();
+//                    System.err.println(g1);
+//                    System.err.println(g2);
+//                }
+//            }
+            
+            for (Gig gig : gigs) {
+				for (Artist artist : artists) {
+					if (artist.equals(gig.getArtist())) {
+						artist.addGig(gig);
+						gig.setArtist(artist);
+					}
+				}
+			}
             
             return artists;
         } catch (Exception e) {
@@ -89,7 +98,6 @@ public class JTidyLoader {
     private void loadGigs(Node node) throws Exception {
         Node nodeClass = node.getAttributes().getNamedItem("class");
         if (inGigDiv) {
-            System.out.println(new String(node.getNodeValue().getBytes(), "UTF-8"));
             Gig gig = createGig(new String(node.getNodeValue().getBytes(), "UTF-8"));
             if (gig != null) {
                 gigs.add(gig);
@@ -100,9 +108,6 @@ public class JTidyLoader {
             inGigDiv = false;
         } else if (nodeClass != null && "col-sm-38".equals(nodeClass.getNodeValue())) {
             nextStage();
-            System.out.println();
-            System.out.println(currentStage);
-            System.out.println();
             enterGigNode(node);
         } else {
             enterGigNode(node);
@@ -135,11 +140,11 @@ public class JTidyLoader {
         return currentStage;
     }
     
-    public List<Artist> loadArtists(String urlString) {
+    public List<Artist> loadArtists() {
         try {
             artists = new ArrayList<Artist>();
             Tidy tidy = new Tidy();
-            URL url = new URL(urlString);
+            URL url = new URL("http://www.wacken.com/de/bands/bands-billing/");
             InputStream openStream = url.openStream();
             Document document = tidy.parseDOM(openStream, System.out);
             loadArtists(document);

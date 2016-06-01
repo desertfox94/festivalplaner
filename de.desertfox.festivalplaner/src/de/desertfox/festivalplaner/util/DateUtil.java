@@ -26,6 +26,8 @@ public class DateUtil {
             return true;
         } else if (endDate2.after(startDate1) && endDate2.before(endDate1)) {
             return true;
+        } else if (startDate1.equals(startDate2) || endDate1.equals(endDate2)) {
+        	return true;
         }
         return false;
     }
