@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="lib" path="lib/htmlunit-2.19-OSGi.jar"/>
+	<classpathentry kind="lib" path="lib/jtidy-r938.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.core.commands.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.equinox.common_3.6.200.v20130402-1505.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.jface.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.osgi_3.3.0.v20070530.jar"/>
+	<classpathentry kind="lib" path="lib/swing2swt.jar"/>
+	<classpathentry kind="lib" path="lib/swt.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
