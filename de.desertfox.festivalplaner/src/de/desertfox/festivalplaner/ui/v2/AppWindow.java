@@ -76,6 +76,13 @@ public class AppWindow {
 		
 		Button btnReset = new Button(shell, SWT.NONE);
 		btnReset.setText("Reset");
+		btnReset.addSelectionListener(new SelectionAdapter() {
+		    @Override
+		    public void widgetSelected(SelectionEvent arg0) {
+		        table.deselectAll();
+		        checkboxTableViewer.refresh();
+		    }
+        });
 		
 		Button btnAuswahlAnwenden = new Button(shell, SWT.NONE);
 		btnAuswahlAnwenden.addSelectionListener(new SelectionAdapter() {
@@ -93,9 +100,11 @@ public class AppWindow {
 				StringBuilder builder = new StringBuilder();
 				
 				artists = loader.loadGigs(artists, "http://www.wacken.com/de/bands/running-order/");
-				for (Artist artist : artists) {
-					System.out.println(artist);
-					for (Artist artist2 : artists) {
+				for (int i = 0; i < artists.size(); i++) {
+				    Artist artist = artists.get(i);
+				    System.out.println(artist);
+				    for (int j = i + 1; j < artists.size(); j++) {
+				        Artist artist2 = artists.get(j);
 						if (artist.equals(artist2)) {
 							continue;
 						}
