@@ -1,4 +1,4 @@
-package de.desertfox.festivalplaner.v2.ui;
+package de.desertfox.festivalplaner.ui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
