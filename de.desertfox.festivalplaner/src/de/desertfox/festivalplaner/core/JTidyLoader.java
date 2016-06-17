@@ -7,7 +7,7 @@
  * Revision: 
  * Created: 01.06.2016, 15:36:00
  */
-package de.desertfox.festivalplaner;
+package de.desertfox.festivalplaner.core;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -51,7 +51,7 @@ public class JTidyLoader {
             Tidy tidy = new Tidy();
             URL url = new URL(urlString);
             InputStream openStream = url.openStream();
-            Document document = tidy.parseDOM(openStream, System.out);
+            Document document = tidy.parseDOM(openStream, null);
             loadGigs(document);
 //            for (Gig gig : gigs) {
 //                System.out.println(gig);

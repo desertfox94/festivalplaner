@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Planer
 Bundle-SymbolicName: de.desertfox.festivalplaner
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.desertfox.festivalplaner.FestivalPlanerActivator
+Bundle-Activator: de.desertfox.festivalplaner.old.ui.FestivalPlanerActivator
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  swing2swt.jar

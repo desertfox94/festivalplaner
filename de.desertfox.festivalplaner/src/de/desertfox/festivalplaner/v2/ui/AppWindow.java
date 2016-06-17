@@ -1,4 +1,4 @@
-package de.desertfox.festivalplaner.ui.v2;
+package de.desertfox.festivalplaner.v2.ui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-import de.desertfox.festivalplaner.JTidyLoader;
+import de.desertfox.festivalplaner.core.JTidyLoader;
 import de.desertfox.festivalplaner.model.Artist;
 import de.desertfox.festivalplaner.model.Gig;
 import de.desertfox.festivalplaner.util.DateUtil;
