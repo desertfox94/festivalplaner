@@ -14,16 +14,12 @@ public class Gig implements Serializable {
     private Date endTime;
     
     public Gig(Stage stage, Date startTime, Date endTime, Artist artist) {
-        super();
         this.stage = stage;
         this.startTime = startTime;
         this.endTime = endTime;
         this.artist = artist;
     }
     
-    public Gig() {
-    }
-
     private Artist artist;
     
     public Stage getStage() {

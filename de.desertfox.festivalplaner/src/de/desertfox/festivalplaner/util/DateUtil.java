@@ -11,6 +11,8 @@ package de.desertfox.festivalplaner.util;
 
 import java.util.Date;
 
+import de.desertfox.festivalplaner.model.Gig;
+
 /**
  * @author d.donges
  *
@@ -30,6 +32,10 @@ public class DateUtil {
         	return true;
         }
         return false;
+    }
+    
+    public static boolean arePeriodsColiding(Gig gig1, Gig gig2) {
+        return arePeriodsColiding(gig1.getStartTime(), gig1.getEndTime(), gig2.getStartTime(), gig2.getEndTime());
     }
     
 }
