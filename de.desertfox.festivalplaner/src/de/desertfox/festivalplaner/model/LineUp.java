@@ -1,17 +1,22 @@
 package de.desertfox.festivalplaner.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LineUp {
 
-    private List<Gig> gigs;
+	private List<Artist> artists = new ArrayList<>();
 
-    public List<Gig> getGigs() {
-        return gigs;
-    }
+	public void add(Artist artist) {
+		artists.add(artist);
+	}
+	
+	public List<Artist> getArtists() {
+		return artists;
+	}
 
-    public void setGigs(List<Gig> gigs) {
-        this.gigs = gigs;
-    }
-    
+	public void setArtists(List<Artist> artists) {
+		this.artists = artists;
+	}
+
 }

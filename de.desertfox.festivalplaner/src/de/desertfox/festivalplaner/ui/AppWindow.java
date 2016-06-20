@@ -22,9 +22,15 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
+import de.desertfox.festivalplaner.api.IFestivalParser;
 import de.desertfox.festivalplaner.core.JTidyLoader;
+import de.desertfox.festivalplaner.core.PersonalRunnigOrderBuilder;
+import de.desertfox.festivalplaner.core.loader.FestivalParserFactory;
+import de.desertfox.festivalplaner.core.loader.WackenFestivalParser;
+import de.desertfox.festivalplaner.core.loader.FestivalParserFactory.FestivalIdentifier;
 import de.desertfox.festivalplaner.model.Artist;
 import de.desertfox.festivalplaner.model.Gig;
+import de.desertfox.festivalplaner.model.PersonalRunnnigOrder;
 import de.desertfox.festivalplaner.util.DateUtil;
 
 import org.eclipse.swt.events.SelectionAdapter;
@@ -32,13 +38,15 @@ import org.eclipse.swt.events.SelectionEvent;
 
 public class AppWindow {
 
-	protected Shell shell;
-	private Text text;
-	private Table table;
-	private CheckboxTableViewer checkboxTableViewer;
+	protected Shell				shell;
+	private Text				text;
+	private Table				table;
+	private CheckboxTableViewer	checkboxTableViewer;
+	private IFestivalParser		currentFestivalParser;
 
 	/**
 	 * Launch the application.
+	 * 
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -96,33 +104,42 @@ public class AppWindow {
 					artist.setGigs(new HashSet<Gig>());
 					artists.add(artist);
 				}
-				
-				StringBuilder builder = new StringBuilder();
-				
-				artists = loader.loadGigs(artists, "http://www.wacken.com/de/bands/running-order/");
-				for (int i = 0; i < artists.size(); i++) {
-				    Artist artist = artists.get(i);
-				    System.out.println(artist);
-				    for (int j = i + 1; j < artists.size(); j++) {
-				        Artist artist2 = artists.get(j);
-						if (artist.equals(artist2)) {
-							continue;
-						}
-						Set<Gig> gigs = artist.getGigs();
-						for (Gig gig : gigs) {
-							for (Gig gig2 : artist2.getGigs()) {
-								if (gig.equals(gig2)) {
-									continue;
-								}
-								if (DateUtil.arePeriodsColiding(gig.getStartTime(), gig.getEndTime(), gig2.getStartTime(), gig2.getEndTime())) {
-									System.err.println(gig);
-									System.err.println(gig2);
-									System.out.println();
-								}
-							}
-						}
+				PersonalRunnnigOrder runningOrder = PersonalRunnigOrderBuilder.buildRunningOrder(artists, currentFestivalParser);
+				List<Gig> gigsOrdered = runningOrder.getGigsOrdered();
+				for (Gig gig : gigsOrdered) {
+					if (runningOrder.isColliding(gig)) {
+						System.err.println(gig);
+					} else {
+						System.out.println(gig);
 					}
 				}
+				
+//				StringBuilder builder = new StringBuilder();
+//				
+//				artists = loader.loadGigs(artists, "http://www.wacken.com/de/bands/running-order/");
+//				for (int i = 0; i < artists.size(); i++) {
+//				    Artist artist = artists.get(i);
+//				    System.out.println(artist);
+//				    for (int j = i + 1; j < artists.size(); j++) {
+//				        Artist artist2 = artists.get(j);
+//						if (artist.equals(artist2)) {
+//							continue;
+//						}
+//						Set<Gig> gigs = artist.getGigs();
+//						for (Gig gig : gigs) {
+//							for (Gig gig2 : artist2.getGigs()) {
+//								if (gig.equals(gig2)) {
+//									continue;
+//								}
+//								if (DateUtil.arePeriodsColiding(gig.getStartTime(), gig.getEndTime(), gig2.getStartTime(), gig2.getEndTime())) {
+//									System.err.println(gig);
+//									System.err.println(gig2);
+//									System.out.println();
+//								}
+//							}
+//						}
+//					}
+//				}
 			}
 		});
 		btnAuswahlAnwenden.setText("Auswahl anwenden");
@@ -133,11 +150,10 @@ public class AppWindow {
 		table.setLinesVisible(true);
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
-		JTidyLoader loader = new JTidyLoader();
-		List<Artist> artists = loader.loadArtists();
-
+		currentFestivalParser = FestivalParserFactory.createFestivalParser(FestivalIdentifier.WACKEN);
+		
 		checkboxTableViewer.setContentProvider(new ArrayContentProvider());
-		checkboxTableViewer.setInput(artists);
+		checkboxTableViewer.setInput(currentFestivalParser.parseLineUp().getArtists());
 		checkboxTableViewer.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -149,6 +165,4 @@ public class AppWindow {
 		text.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 	}
 
-	
-	
 }

@@ -33,18 +33,6 @@ import de.desertfox.festivalplaner.util.DateUtil;
  */
 public class JTidyLoader {
 
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        JTidyLoader jTidyLoader = new JTidyLoader();
-        List<Artist> artists = jTidyLoader.loadArtists();
-        for (Artist artist : artists) {
-            System.out.println(artist.getName());
-        }
-        jTidyLoader.loadGigs(artists, "http://www.wacken.com/de/bands/running-order/");
-    }
-
     public List<Artist> loadGigs(List<Artist> artists, String urlString) {
         try {
             gigs = new ArrayList<Gig>();
@@ -128,9 +116,7 @@ public class JTidyLoader {
         gig.setStage(currentStage);
         return gig;
     }
-    
-    
-    
+   
     private Stage nextStage() {
         currentStageIndex++;
         if (currentStageIndex >= stages.length) {
@@ -140,69 +126,6 @@ public class JTidyLoader {
         return currentStage;
     }
     
-    public List<Artist> loadArtists() {
-        try {
-            artists = new ArrayList<Artist>();
-            Tidy tidy = new Tidy();
-            URL url = new URL("http://www.wacken.com/de/bands/bands-billing/");
-            InputStream openStream = url.openStream();
-            Document document = tidy.parseDOM(openStream, System.out);
-            loadArtists(document);
-            return artists;
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return Collections.EMPTY_LIST;
-    }
-
-    private List<Artist> artists;
-    private String       name;
-    private String       imageLink;
-    private boolean      inAnchor;
-    private boolean      inArtistDiv;
-
-    private void loadArtists(Node node) throws Exception {
-        //        System.out.println(node.getLocalName());
-        Node nodeClass = node.getAttributes().getNamedItem("class");
-
-        if (inArtistDiv && "a".equals(node.getLocalName())) {
-            inAnchor = true;
-            enterAritstNode(node);
-            inAnchor = false;
-        } else if (inAnchor && node.getNodeValue() != null && !node.getNodeValue().isEmpty()) {
-            name = new String(node.getNodeValue().getBytes(), "UTF-8");
-        } else if (inAnchor && "img".equals(node.getLocalName())) {
-            Node srcNode = node.getAttributes().getNamedItem("src");
-            if (srcNode != null) {
-                imageLink = srcNode.getNodeValue();
-            }
-        } else if (nodeClass != null) {
-            createArtist();
-            inArtistDiv = "col-sm-20".equals(nodeClass.getNodeValue());
-            enterAritstNode(node);
-        } else {
-            enterAritstNode(node);
-        }
-    }
-
-    private void createArtist() {
-        if (name != null && imageLink != null) {
-            Artist artist = new Artist(name);
-            artist.setImageLink(imageLink);
-            artists.add(artist);
-            name = null;
-            imageLink = null;
-        }
-    }
-
-    private void enterAritstNode(Node node) throws Exception {
-        NodeList childNodes = node.getChildNodes();
-        for (int i = 0; i < childNodes.getLength(); i++) {
-            loadArtists(childNodes.item(i));
-        }
-    }
-
     private void enterGigNode(Node node) throws Exception {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
