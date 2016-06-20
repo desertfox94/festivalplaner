@@ -12,7 +12,7 @@ package de.desertfox.festivalplaner.core;
 import java.util.List;
 import java.util.Set;
 
-import de.desertfox.festivalplaner.api.IWebFestivalParser;
+import de.desertfox.festivalplaner.api.IFestivalParser;
 import de.desertfox.festivalplaner.model.Artist;
 import de.desertfox.festivalplaner.model.Gig;
 import de.desertfox.festivalplaner.model.PersonalRunnnigOrder;
@@ -25,7 +25,7 @@ import de.desertfox.festivalplaner.util.CollisionFinder;
  */
 public class PersonalRunnigOrderBuilder {
 
-    public static PersonalRunnnigOrder buildRunningOrder(List<Artist> artists, IWebFestivalParser festivalParser) {
+    public static PersonalRunnnigOrder buildRunningOrder(List<Artist> artists, IFestivalParser festivalParser) {
         return buildRunningOrder(artists, festivalParser.parseRunningOrder());
     }
 

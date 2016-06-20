@@ -1,9 +1,9 @@
 package de.desertfox.festivalplaner.core.loader;
 
-import de.desertfox.festivalplaner.api.IWebFestivalParser;
+import de.desertfox.festivalplaner.api.IFestivalParser;
 import de.desertfox.festivalplaner.model.Festival;
 
-public abstract class AbstractFestivalLoader implements IWebFestivalParser {
+public abstract class AbstractFestivalLoader implements IFestivalParser {
 
     private Festival festival;
 

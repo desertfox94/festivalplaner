@@ -20,6 +20,9 @@ public class Gig implements Serializable {
         this.artist = artist;
     }
     
+    public Gig() {
+    }
+    
     private Artist artist;
     
     public Stage getStage() {

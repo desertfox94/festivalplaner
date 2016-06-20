@@ -17,7 +17,7 @@ import de.desertfox.festivalplaner.model.RunningOrder;
  * @author d.donges
  *
  */
-public interface IWebFestivalParser {
+public interface IFestivalParser {
 
     public Festival parseFestival() throws FestivalParseException;
 
