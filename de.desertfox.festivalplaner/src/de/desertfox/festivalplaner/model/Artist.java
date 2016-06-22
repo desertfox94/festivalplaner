@@ -21,12 +21,13 @@ import java.util.Set;
  */
 public class Artist implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    private String            imageLink;
-    private URL               imageUrl;
-    private String            name;
-    private Set<Gig>          gigs             = new HashSet<Gig>();
-    private HashMap<String, Object> meta = new HashMap<String, Object>();
+    private static final long       serialVersionUID = 1L;
+    private String                  imageLink;
+    private boolean                 favorite;
+    private URL                     imageUrl;
+    private String                  name;
+    private Set<Gig>                gigs             = new HashSet<Gig>();
+    private HashMap<String, Object> meta             = new HashMap<String, Object>();
 
     public Artist(String name) {
         this.name = name;
@@ -34,13 +35,13 @@ public class Artist implements Serializable {
 
     public Artist() {
     }
-    
+
     @Override
     public boolean equals(Object obj) {
-    	if (obj instanceof Artist) {
-    		return ((Artist) obj).getName().toUpperCase().equals(name.toUpperCase());
-    	}
-    	return super.equals(obj);
+        if (obj instanceof Artist) {
+            return ((Artist) obj).getName().toUpperCase().equals(name.toUpperCase());
+        }
+        return super.equals(obj);
     }
 
     public String getName() {
@@ -74,12 +75,12 @@ public class Artist implements Serializable {
     public void addMeta(String key, Object value) {
         meta.put(key, value);
     }
-    
+
     @Override
     public String toString() {
-    	return name;
+        return name;
     }
-    
+
     public HashMap<String, Object> getMeta() {
         return meta;
     }
@@ -90,6 +91,14 @@ public class Artist implements Serializable {
 
     public void setImageUrl(URL imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
     }
 
 }

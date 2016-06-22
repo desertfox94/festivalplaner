@@ -11,5 +11,7 @@
 	<classpathentry kind="lib" path="lib/swing2swt.jar"/>
 	<classpathentry kind="lib" path="lib/swt.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.7.9.jar"/>
+	<classpathentry kind="lib" path="lib/jansi-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/JCDP-1.25-win.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

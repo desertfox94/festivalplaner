@@ -74,8 +74,8 @@ public class Gig implements Serializable {
     
     @Override
     public String toString() {
-        return DATE_FORMAT.format(startTime) + "-" + DATE_FORMAT.format(endTime) + " " + artist.getName();
-//        return TIME_FORMAT.format(startTime) + "-" + TIME_FORMAT.format(endTime) + " " + artist.getName();
+//        return DATE_FORMAT.format(startTime) + "-" + DATE_FORMAT.format(endTime) + " " + artist.getName();
+        return TIME_FORMAT.format(startTime) + "-" + TIME_FORMAT.format(endTime) + " " + artist.getName();
     }
 
     public Date getDayOfFestival() {

@@ -1,6 +1,10 @@
 package de.desertfox.festivalplaner.core.loader;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.URL;
 
 import org.slf4j.Logger;
@@ -24,6 +28,9 @@ public abstract class AbstractFestivalLoader implements IFestivalParser {
 
 	protected void init() {
 		loader = new Tidy();
+		loader.setShowErrors(0);
+		loader.setQuiet(true);
+		loader.setShowWarnings(false);
 	}
 
 	@Override
@@ -81,7 +88,7 @@ public abstract class AbstractFestivalLoader implements IFestivalParser {
 		try {
 			URL url = new URL(path);
 			inputStream = url.openStream();
-			Document doc = loader.parseDOM(inputStream, System.out);
+            Document doc = loader.parseDOM(inputStream, System.out);
 			inputStream.close();
 			inputStream = null;
 			return doc;
