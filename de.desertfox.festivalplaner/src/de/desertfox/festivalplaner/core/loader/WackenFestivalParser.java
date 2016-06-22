@@ -136,11 +136,9 @@ public class WackenFestivalParser extends AbstractFestivalLoader {
             enterGigNode(node);
             inGigDiv = false;
         } else if (nodeClass != null && "col-sm-80".equals(nodeClass.getNodeValue())) {
-            possibleStageDivOrDayDiv = true;
             enterGigNode(node);
-            possibleStageDivOrDayDiv = false;
-        } else if (possibleStageDivOrDayDiv && "img".equals(node.getLocalName())) {
-            if (node.getAttributes().getNamedItem("src").getNodeValue().contains("grau.jpg")) {
+        } else if ("img".equals(node.getLocalName())) {
+            if (node.getAttributes().getNamedItem("src").getNodeValue().contains("grau")) {
                 currentStage = getStage(node.getAttributes().getNamedItem("src").getNodeValue());
             } else if (isDayDiv(node.getAttributes().getNamedItem("src").getNodeValue()) != null) {
                 currentDay++;

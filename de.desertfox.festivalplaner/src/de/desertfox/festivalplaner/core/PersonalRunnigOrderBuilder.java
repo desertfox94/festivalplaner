@@ -48,7 +48,7 @@ public class PersonalRunnigOrderBuilder {
                 previous = gig;
                 continue;
             }
-            if (!GigUtil.fitsGap(previous, gig, 15)) {
+            if (!GigUtil.fitsGap(previous, gig, 95)) {
                 personalRunnnigOrder.addGigWithGapProblems(gig);
             }
             previous = gig;

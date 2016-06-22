@@ -1,6 +1,7 @@
 package de.desertfox.festivalplaner.ui;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -53,6 +54,8 @@ public class AppWindow {
     private TableViewerColumn                   priorityViewerColumn;
     private TableColumn                         checkBoxColumn;
     private TableViewerColumn                   checkBoxViewerColumn;
+    private ColoredPrinterWIN cp = new ColoredPrinterWIN.Builder(1, false).foreground(FColor.WHITE).background(BColor.BLACK).build();
+    
 
     /**
      * Launch the application.
@@ -109,6 +112,10 @@ public class AppWindow {
         btnAuswahlAnwenden.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
+                    try {
+                        new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+                    } catch (Exception e) {
+                    }
                 Object[] checkedElements = checkboxTableViewer.getCheckedElements();
                 List<Artist> artists = new ArrayList<>();
                 for (Object object : checkedElements) {
@@ -119,7 +126,6 @@ public class AppWindow {
                 PersonalRunnnigOrder runningOrder = PersonalRunnigOrderBuilder.buildRunningOrder(artists, currentFestivalParser);
                 List<Gig> gigsOrdered = runningOrder.getGigsOrdered();
                 Date currentFestivalDay = null;
-                ColoredPrinterWIN cp = new ColoredPrinterWIN.Builder(1, false).foreground(FColor.WHITE).background(BColor.BLACK).build();
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
                 for (Gig gig : gigsOrdered) {
                     if (currentFestivalDay == null) {
@@ -140,33 +146,9 @@ public class AppWindow {
                         cp.println(gig.toString(), Attribute.NONE, FColor.GREEN, BColor.BLACK);
                     }
                 }
+                cp.setBackgroundColor(BColor.BLACK);
+                cp.setForegroundColor(FColor.WHITE);
                 cp.clear();
-                //				StringBuilder builder = new StringBuilder();
-                //				
-                //				artists = loader.loadGigs(artists, "http://www.wacken.com/de/bands/running-order/");
-                //				for (int i = 0; i < artists.size(); i++) {
-                //				    Artist artist = artists.get(i);
-                //				    System.out.println(artist);
-                //				    for (int j = i + 1; j < artists.size(); j++) {
-                //				        Artist artist2 = artists.get(j);
-                //						if (artist.equals(artist2)) {
-                //							continue;
-                //						}
-                //						Set<Gig> gigs = artist.getGigs();
-                //						for (Gig gig : gigs) {
-                //							for (Gig gig2 : artist2.getGigs()) {
-                //								if (gig.equals(gig2)) {
-                //									continue;
-                //								}
-                //								if (DateUtil.arePeriodsColiding(gig.getStartTime(), gig.getEndTime(), gig2.getStartTime(), gig2.getEndTime())) {
-                //									System.err.println(gig);
-                //									System.err.println(gig2);
-                //									System.out.println();
-                //								}
-                //							}
-                //						}
-                //					}
-                //				}
             }
         });
         btnAuswahlAnwenden.setText("Auswahl anwenden");
@@ -178,30 +160,16 @@ public class AppWindow {
         table.setLinesVisible(true);
         table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
-        table.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent arg0) {
-                System.out.println();
-            }
-        });
-
         checkBoxViewerColumn = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
         checkBoxColumn = checkBoxViewerColumn.getColumn();
         checkBoxColumn.setWidth(250);
         checkBoxColumn.setText("New Column");
-        checkBoxColumn.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent arg0) {
-                super.widgetSelected(arg0);
-            }
-        });
         checkBoxViewerColumn.setLabelProvider(new ColumnLabelProvider() {
             @Override
             public String getText(Object element) {
                 return ((Artist) element).toString();
             }
         });
-
         priorityViewerColumn = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
         priorityColumn = priorityViewerColumn.getColumn();
         priorityColumn.setWidth(16);

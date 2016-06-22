@@ -26,7 +26,7 @@ public class GigUtil {
         Calendar cal = Calendar.getInstance();
         cal.setTime(gig1.getEndTime());
         cal.add(Calendar.MINUTE, gapInMinutes);
-        return cal.getTime().compareTo(gig2.getStartTime()) < 0;
+        return cal.getTime().compareTo(gig2.getStartTime()) < 0 || gig1.getStage().equals(gig2.getStage());
     }
     
 }
