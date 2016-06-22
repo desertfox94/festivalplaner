@@ -17,7 +17,7 @@ import de.desertfox.festivalplaner.model.Artist;
 import de.desertfox.festivalplaner.model.Gig;
 import de.desertfox.festivalplaner.model.PersonalRunnnigOrder;
 import de.desertfox.festivalplaner.model.RunningOrder;
-import de.desertfox.festivalplaner.util.CollisionFinder;
+import de.desertfox.festivalplaner.util.GigUtil;
 
 /**
  * @author d.donges
@@ -33,10 +33,25 @@ public class PersonalRunnigOrderBuilder {
         PersonalRunnnigOrder personalRunnnigOrder = new PersonalRunnnigOrder();
         for (Artist artist : artists) {
             Set<Gig> gigs = runningOrder.getGigs(artist);
+            if (gigs == null) {
+                System.err.println(artist);
+                continue;
+            }
             for (Gig gig : gigs) {
-                Set<Gig> collisions = CollisionFinder.findCollisions(gig, runningOrder.getGigsOrdered());
+                Set<Gig> collisions = GigUtil.findCollisions(gig, personalRunnnigOrder.getGigsOrdered());
                 personalRunnnigOrder.add(gig, collisions);
             }
+        }
+        Gig previous = null;
+        for (Gig gig : personalRunnnigOrder.getGigsOrdered()) {
+            if (previous == null) {
+                previous = gig;
+                continue;
+            }
+            if (!GigUtil.fitsGap(previous, gig, 15)) {
+                personalRunnnigOrder.addGigWithGapProblems(gig);
+            }
+            previous = gig;
         }
         return personalRunnnigOrder;
     }

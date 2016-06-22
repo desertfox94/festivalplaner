@@ -1,12 +1,13 @@
 package de.desertfox.festivalplaner.util;
 
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import de.desertfox.festivalplaner.model.Gig;
 
-public class CollisionFinder {
+public class GigUtil {
 
     public static Set<Gig> findCollisions(Gig gig, Collection<Gig> gigs) {
         Set<Gig> collisions = new HashSet<>();
@@ -19,6 +20,13 @@ public class CollisionFinder {
             }
         }
         return collisions;
+    }
+    
+    public static boolean fitsGap(Gig gig1, Gig gig2, int gapInMinutes) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(gig1.getEndTime());
+        cal.add(Calendar.MINUTE, gapInMinutes);
+        return cal.getTime().compareTo(gig2.getStartTime()) < 0;
     }
     
 }

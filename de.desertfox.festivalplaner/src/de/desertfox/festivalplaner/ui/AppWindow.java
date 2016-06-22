@@ -1,40 +1,34 @@
 package de.desertfox.festivalplaner.ui;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.bcel.generic.AASTORE;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 import de.desertfox.festivalplaner.api.IFestivalParser;
 import de.desertfox.festivalplaner.core.JTidyLoader;
 import de.desertfox.festivalplaner.core.PersonalRunnigOrderBuilder;
 import de.desertfox.festivalplaner.core.loader.FestivalParserFactory;
-import de.desertfox.festivalplaner.core.loader.WackenFestivalParser;
 import de.desertfox.festivalplaner.core.loader.FestivalParserFactory.FestivalIdentifier;
 import de.desertfox.festivalplaner.model.Artist;
 import de.desertfox.festivalplaner.model.Gig;
 import de.desertfox.festivalplaner.model.PersonalRunnnigOrder;
-import de.desertfox.festivalplaner.util.DateUtil;
-
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 
 public class AppWindow {
 
@@ -106,11 +100,24 @@ public class AppWindow {
 				}
 				PersonalRunnnigOrder runningOrder = PersonalRunnigOrderBuilder.buildRunningOrder(artists, currentFestivalParser);
 				List<Gig> gigsOrdered = runningOrder.getGigsOrdered();
+				Date currentFestivalDay = null;
+				SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 				for (Gig gig : gigsOrdered) {
+				    if (currentFestivalDay == null) {
+				        currentFestivalDay = gig.getDayOfFestival();
+				        System.out.println(dateFormat.format(currentFestivalDay));
+				    } else if (!gig.getDayOfFestival().equals(currentFestivalDay)) {
+				        currentFestivalDay = gig.getDayOfFestival();
+				        System.out.println();
+				        System.out.println(dateFormat.format(currentFestivalDay));
+				    }
 					if (runningOrder.isColliding(gig)) {
+					    
 						System.err.println(gig);
+					} else if (runningOrder.hasGapProblems(gig)) {
+						System.out.println("\u001B[33m" + gig + "\u001B[0m");
 					} else {
-						System.out.println(gig);
+					    System.out.println(gig);
 					}
 				}
 				

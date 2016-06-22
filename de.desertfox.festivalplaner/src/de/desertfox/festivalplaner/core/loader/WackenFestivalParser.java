@@ -9,8 +9,8 @@
  */
 package de.desertfox.festivalplaner.core.loader;
 
-import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -36,6 +36,15 @@ public class WackenFestivalParser extends AbstractFestivalLoader {
 	public static final String	LINE_UP_URL			= "http://www.wacken.com/de/bands/bands-billing/";
 	public static final String	RUNNING_ORDER_URL	= "http://www.wacken.com/de/bands/running-order/";
 
+	private Stage wackinger = new Stage("Wackinger Stage");
+	private Stage trueMetal = new Stage("True Metal Stage");
+	private Stage black = new Stage("Black Stage");
+	private Stage wasteland = new Stage("Wasteland Stage");
+	private Stage wet = new Stage("W:E:T Stage");
+	private Stage party = new Stage("Party Stage");
+	private Stage beerGarden = new Stage("Beer Garden Stage");
+	private Stage headbangers = new Stage("Headbanges Stage");
+	
 	/* LineUp member variables */
 	private LineUp				lineUp;
 	private RawArtist			raw;
@@ -51,19 +60,11 @@ public class WackenFestivalParser extends AbstractFestivalLoader {
 			new Stage("Wasteland Stage") };
 	private int					currentStageIndex;
 	private Stage				currentStage;
-	private int					currentDay;
+	private int					currentDay = -1;
 	private String[]			days				= new String[] { "03.08.2016", "04.08.2016", "05.08.2016",
 			"06.08.2016" };
 	private SimpleDateFormat	format				= new SimpleDateFormat("HH:mm dd.MM.yyyy");
-
-	public static void main(String[] args) {
-		WackenFestivalParser parser = new WackenFestivalParser();
-		LineUp lineUp = parser.parseLineUp();
-		List<Artist> artists = lineUp.getArtists();
-		for (Artist artist : artists) {
-			System.out.println(artist);
-		}
-	}
+	private SimpleDateFormat	dayFormat				= new SimpleDateFormat("dd.MM.yyyy");
 
 	@Override
 	public LineUp parseLineUp() {
@@ -120,6 +121,15 @@ public class WackenFestivalParser extends AbstractFestivalLoader {
 		raw = null;
 	}
 
+	private String getDay(int i) {
+	    if (i == days.length) {
+	        return "07.08.2016";
+	    }
+	    return days[i];
+	}
+	
+	private boolean possibleStageDivOrDayDiv;
+	
 	private void loadGigs(Node node) throws Exception {
 		Node nodeClass = node.getAttributes().getNamedItem("class");
 		if (inGigDiv) {
@@ -132,14 +142,59 @@ public class WackenFestivalParser extends AbstractFestivalLoader {
 			inGigDiv = true;
 			enterGigNode(node);
 			inGigDiv = false;
-		} else if (nodeClass != null && "col-sm-38".equals(nodeClass.getNodeValue())) {
-			nextStage();
+		} else if (nodeClass != null && "col-sm-80".equals(nodeClass.getNodeValue())) {
+			possibleStageDivOrDayDiv = true;
 			enterGigNode(node);
+			possibleStageDivOrDayDiv = false;
+		} else if (possibleStageDivOrDayDiv && "img".equals(node.getLocalName())) {
+		    if (node.getAttributes().getNamedItem("src").getNodeValue().contains("grau.jpg")) {
+		        currentStage = getStage(node.getAttributes().getNamedItem("src").getNodeValue());
+		    } else if (isDayDiv(node.getAttributes().getNamedItem("src").getNodeValue()) != null) {
+		        currentDay++;
+		    }
 		} else {
 			enterGigNode(node);
 		}
 	}
+	
+	private String[] festivalDays = new String[] {
+	        "Mittwoch", "Donnerstag", "Freitag", "Samstag"
+	};
+	
+	private String dayUrlWithPlacehodler = "http://www.wacken.com/uploads/tx_woalineupmanagement/plugin_pi3/%%_de.jpg";
+	
+	private String isDayDiv(String imgUrl) {
+	    String day;
+	    for (int i = 0; i < festivalDays.length; i++) {
+	        day = festivalDays[i];
+	        if (dayUrlWithPlacehodler.replace("%%", day).equals(imgUrl)) {
+	            return days[i];
+	        }
+        }
+	    return null;
+	}
 
+	private Stage getStage(String imgUrl) {
+	    if ("http://www.wacken.com/uploads/tx_woalineupmanagement/plugin_pi3/wackinger_stage_grau.jpg".equals(imgUrl)) {
+	        return wackinger;
+	    } else if ("http://www.wacken.com/uploads/tx_woalineupmanagement/plugin_pi3/Beer_Garden_grau.jpg".equals(imgUrl)) {
+            return beerGarden;
+        } else if ("http://www.wacken.com/uploads/tx_woalineupmanagement/plugin_pi3/wasteland_stage_grau.jpg".equals(imgUrl)) {
+            return wasteland;
+        } else if ("http://www.wacken.com/uploads/tx_woalineupmanagement/plugin_pi3/black_stage_grau.jpg".equals(imgUrl)) {
+            return black;
+        } else if ("http://www.wacken.com/uploads/tx_woalineupmanagement/plugin_pi3/true_metal_stage_grau_02.jpg".equals(imgUrl)) {
+            return trueMetal;
+        } else if ("http://www.wacken.com/uploads/tx_woalineupmanagement/plugin_pi3/Party_Stage_grau.jpg".equals(imgUrl)) {
+            return party;
+        } else if ("http://www.wacken.com/uploads/tx_woalineupmanagement/plugin_pi3/WET_Stage_grau.jpg".equals(imgUrl)) {
+            return wet;
+        } else if ("http://www.wacken.com/uploads/tx_woalineupmanagement/plugin_pi3/Headbangers_Stage_grau.jpg".equals(imgUrl)) {
+            return headbangers;
+        }
+	    return null;
+	}
+	
 	private Gig createGig(String gigString) throws Exception {
 		if (gigString.startsWith("Diese")) {
 			return null;
@@ -147,8 +202,20 @@ public class WackenFestivalParser extends AbstractFestivalLoader {
 		gigString = gigString.replaceFirst(" ", "").replaceFirst(" ", "");
 		String[] times = gigString.substring(0, gigString.indexOf(' ') + 1).trim().split("-");
 		Gig gig = new Gig();
-		gig.setStartTime(format.parse(times[0] + " " + days[currentDay]));
-		gig.setEndTime(format.parse(times[1] + " " + days[currentDay]));
+		gig.setDayOfFestival(dayFormat.parse(getDay(currentDay)));
+		
+		Calendar startTime = Calendar.getInstance();
+		startTime.setTime(format.parse(times[0] + " " + getDay(currentDay)));
+		Calendar endTime = Calendar.getInstance();
+		endTime.setTime(format.parse(times[1] + " " + getDay(currentDay)));
+		if (startTime.get(Calendar.HOUR_OF_DAY) < 5) {
+		    startTime.add(Calendar.DAY_OF_YEAR, 1);
+		}
+		if (endTime.get(Calendar.HOUR_OF_DAY) < 5) {
+		    endTime.add(Calendar.DAY_OF_YEAR, 1);
+		}
+		gig.setStartTime(startTime.getTime());
+		gig.setEndTime(endTime.getTime());
 		String artistName = gigString.substring(gigString.indexOf(' ') + 1).trim();
 		Artist artist = getArtistFromLineUp(artistName);
 		if (artist == null) {
@@ -170,15 +237,6 @@ public class WackenFestivalParser extends AbstractFestivalLoader {
 		return null;
 	}
 	
-	private Stage nextStage() {
-		currentStageIndex++;
-		if (currentStageIndex >= stages.length) {
-			currentStageIndex = 0;
-		}
-		currentStage = stages[currentStageIndex];
-		return currentStage;
-	}
-
 	private void enterGigNode(Node node) throws Exception {
 		NodeList childNodes = node.getChildNodes();
 		for (int i = 0; i < childNodes.getLength(); i++) {
@@ -189,6 +247,8 @@ public class WackenFestivalParser extends AbstractFestivalLoader {
 	@Override
 	public RunningOrder parseRunningOrder() {
 		runningOrder = new RunningOrder();
+		currentDay = -1;
+		currentStageIndex = 0;
 		try {
 			if (lineUp == null) {
 				parseLineUp();
