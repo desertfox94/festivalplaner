@@ -11,7 +11,7 @@ public class PersonalRunnnigOrder extends RunningOrder {
     private Set<Gig> gigsWithGapProblems = new HashSet<>();
 
     public void add(Gig gig, Set<Gig> collisions) {
-        addToRunningOrderGigs(gig);
+        addGigsToRunningOrder(gig);
         if (gigToCollisions.put(gig, collisions) != null) {
             addCollision(gig, collisions);            
         }

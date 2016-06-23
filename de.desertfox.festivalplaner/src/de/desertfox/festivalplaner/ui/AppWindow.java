@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -54,8 +56,7 @@ public class AppWindow {
     private TableViewerColumn                   priorityViewerColumn;
     private TableColumn                         checkBoxColumn;
     private TableViewerColumn                   checkBoxViewerColumn;
-    private ColoredPrinterWIN cp = new ColoredPrinterWIN.Builder(1, false).foreground(FColor.WHITE).background(BColor.BLACK).build();
-    
+    private ColoredPrinterWIN                   cp = new ColoredPrinterWIN.Builder(1, false).foreground(FColor.WHITE).background(BColor.BLACK).build();
 
     /**
      * Launch the application.
@@ -112,10 +113,10 @@ public class AppWindow {
         btnAuswahlAnwenden.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
-                    try {
-                        new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-                    } catch (Exception e) {
-                    }
+                try {
+                    new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+                } catch (Exception e) {
+                }
                 Object[] checkedElements = checkboxTableViewer.getCheckedElements();
                 List<Artist> artists = new ArrayList<>();
                 for (Object object : checkedElements) {
@@ -124,31 +125,30 @@ public class AppWindow {
                     artists.add(artist);
                 }
                 PersonalRunnnigOrder runningOrder = PersonalRunnigOrderBuilder.buildRunningOrder(artists, currentFestivalParser);
-                List<Gig> gigsOrdered = runningOrder.getGigsOrdered();
-                Date currentFestivalDay = null;
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-                for (Gig gig : gigsOrdered) {
-                    if (currentFestivalDay == null) {
-                        currentFestivalDay = gig.getDayOfFestival();
-                        cp.println(dateFormat.format(currentFestivalDay));
-                    } else if (!gig.getDayOfFestival().equals(currentFestivalDay)) {
-                        currentFestivalDay = gig.getDayOfFestival();
-                        cp.println("");
-                        cp.println(dateFormat.format(currentFestivalDay));
+                List<Date> daysOfFestival = runningOrder.getDaysOfFestival();
+                for (Date day : daysOfFestival) {
+                    cp.setForegroundColor(FColor.WHITE);
+                    cp.println("");
+                    cp.println(dateFormat.format(day));
+
+                    List<Gig> gigsByDay = runningOrder.getGigsByDay(day);
+                    if (gigsByDay.isEmpty()) {
+                        cp.println("<keine Bands>");
+                        continue;
                     }
-                    if (runningOrder.isColliding(gig) && gig.getArtist().isFavorite()) {
-                        cp.println(gig.toString(), Attribute.NONE, FColor.MAGENTA, BColor.BLACK);
-                    } else if (runningOrder.isColliding(gig)) {
-                        cp.println(gig.toString(), Attribute.NONE, FColor.RED, BColor.BLACK);
-                    } else if (runningOrder.hasGapProblems(gig)) {
-                        cp.println(gig.toString(), Attribute.NONE, FColor.YELLOW, BColor.BLACK);
-                    } else {
-                        cp.println(gig.toString(), Attribute.NONE, FColor.GREEN, BColor.BLACK);
+                    for (Gig gig : gigsByDay) {
+                        if (runningOrder.isColliding(gig) && gig.getArtist().isFavorite()) {
+                            cp.println(gig.toString(), Attribute.NONE, FColor.MAGENTA, BColor.BLACK);
+                        } else if (runningOrder.isColliding(gig)) {
+                            cp.println(gig.toString(), Attribute.NONE, FColor.RED, BColor.BLACK);
+                        } else if (runningOrder.hasGapProblems(gig)) {
+                            cp.println(gig.toString(), Attribute.NONE, FColor.YELLOW, BColor.BLACK);
+                        } else {
+                            cp.println(gig.toString(), Attribute.NONE, FColor.GREEN, BColor.BLACK);
+                        }
                     }
                 }
-                cp.setBackgroundColor(BColor.BLACK);
-                cp.setForegroundColor(FColor.WHITE);
-                cp.clear();
             }
         });
         btnAuswahlAnwenden.setText("Auswahl anwenden");
