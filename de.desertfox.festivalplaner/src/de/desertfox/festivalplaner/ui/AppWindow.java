@@ -216,7 +216,7 @@ public class AppWindow {
         currentFestivalParser = FestivalParserFactory.createFestivalParser(FestivalIdentifier.WACKEN);
 
         checkboxTableViewer.setContentProvider(new ArrayContentProvider());
-        checkboxTableViewer.setInput(currentFestivalParser.parseLineUp().getArtists());
+        checkboxTableViewer.setInput(currentFestivalParser.parseLineUp().getArtistsAndSpecialEvents());
         //        checkboxTableViewer.setLabelProvider(new LabelProvider() {
         //            @Override
         //            public String getText(Object element) {

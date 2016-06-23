@@ -24,7 +24,7 @@ public class ArtistFactory {
 			return null;
 		}
 		Artist artist = new Artist();
-		artist.setName(raw.name);
+		artist.setName(raw.name.trim());
 		try {
 			artist.setImageUrl(new URL(raw.imageLink));
 		} catch (MalformedURLException e) {

@@ -11,6 +11,7 @@ package de.desertfox.festivalplaner.core.loader;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -66,6 +67,7 @@ public class WackenFestivalParser extends AbstractFestivalLoader {
         try {
             lineUp = new LineUp();
             loadArtists(loadDocument(LINE_UP_URL));
+            parseRunningOrder();
         } catch (Exception e) {
             logger.error("Error while parsing the LineUp of Wacken Open Air", e);
         }
@@ -121,8 +123,6 @@ public class WackenFestivalParser extends AbstractFestivalLoader {
         }
         return days[i];
     }
-
-    private boolean possibleStageDivOrDayDiv;
 
     private void loadGigs(Node node) throws Exception {
         Node nodeClass = node.getAttributes().getNamedItem("class");
@@ -184,6 +184,8 @@ public class WackenFestivalParser extends AbstractFestivalLoader {
         return null;
     }
 
+    private Date currentDayOfFestival;
+    
     private Gig createGig(String gigString) throws Exception {
         if (gigString.startsWith("Diese")) {
             return null;
@@ -191,7 +193,12 @@ public class WackenFestivalParser extends AbstractFestivalLoader {
         gigString = gigString.replaceFirst(" ", "").replaceFirst(" ", "");
         String[] times = gigString.substring(0, gigString.indexOf(' ') + 1).trim().split("-");
         Gig gig = new Gig();
-        gig.setDayOfFestival(dayFormat.parse(getDay(currentDay)));
+        if (currentDayOfFestival == null) {
+            currentDayOfFestival = dayFormat.parse(getDay(currentDay));
+        } else if (!dayFormat.parse(getDay(currentDay)).equals(currentDayOfFestival)) {
+            currentDayOfFestival = dayFormat.parse(getDay(currentDay));
+        }
+        gig.setDayOfFestival(currentDayOfFestival);
 
         Calendar startTime = Calendar.getInstance();
         startTime.setTime(format.parse(times[0] + " " + getDay(currentDay)));
@@ -207,19 +214,19 @@ public class WackenFestivalParser extends AbstractFestivalLoader {
         gig.setEndTime(endTime.getTime());
         String artistName = gigString.substring(gigString.indexOf(' ') + 1).trim();
         Artist artist = getArtistFromLineUp(artistName);
+        gig.setStage(currentStage);
         if (artist == null) {
-//            System.err.println(artistName);
-            return null;
+            artist = new Artist(artistName);
+            lineUp.addSpecialEvent(gig);
         }
         gig.setArtist(artist);
-        gig.setStage(currentStage);
         return gig;
     }
 
     private Artist getArtistFromLineUp(String name) {
         List<Artist> artists = lineUp.getArtists();
         for (Artist artist : artists) {
-            if (artist.getName().equals(name)) {
+            if (artist.getName().equalsIgnoreCase(name)) {
                 return artist;
             }
         }
@@ -237,6 +244,8 @@ public class WackenFestivalParser extends AbstractFestivalLoader {
     public RunningOrder parseRunningOrder() {
         runningOrder = new RunningOrder();
         currentDay = -1;
+        currentDayOfFestival = null;
+        currentStage = null;
         try {
             if (lineUp == null) {
                 parseLineUp();
