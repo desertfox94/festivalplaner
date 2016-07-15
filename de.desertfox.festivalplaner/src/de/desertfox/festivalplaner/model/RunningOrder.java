@@ -18,11 +18,16 @@ import de.desertfox.festivalplaner.util.GigComparator;
 
 public class RunningOrder {
 
-    public static final SimpleDateFormat DATE_FORMAT= new SimpleDateFormat("dd.MM.yyyy");
-    private Map<Artist, Set<Gig>>  artistToGigs        = new HashMap<Artist, Set<Gig>>();
-    private Map<String, List<Gig>> dayOfFestivalToGigs = new HashMap<>();
-    private List<Gig>              gigsOrdered         = new ArrayList<>();
-    private GigComparator          comparator          = new GigComparator();
+    public static final SimpleDateFormat DATE_FORMAT         = new SimpleDateFormat("dd.MM.yyyy");
+    private Map<Artist, Set<Gig>>        artistToGigs        = new HashMap<Artist, Set<Gig>>();
+    private Map<String, List<Gig>>       dayOfFestivalToGigs = new HashMap<>();
+    private List<Gig>                    gigsOrdered         = new ArrayList<>();
+    private GigComparator                comparator          = new GigComparator();
+    private Festival                     festival;
+
+    public RunningOrder(Festival festival) {
+        this.festival = festival;
+    }
 
     public void put(Artist artist, Set<Gig> gigs) {
         addGigs(gigs);
@@ -87,7 +92,7 @@ public class RunningOrder {
             addDayOfFestival(day);
         }
     }
-    
+
     public List<Date> getDaysOfFestival() {
         List<Date> result = new ArrayList<>();
         for (String dayString : dayOfFestivalToGigs.keySet()) {
@@ -115,7 +120,7 @@ public class RunningOrder {
     public List<Gig> getGigsByDay(Date day) {
         return dayOfFestivalToGigs.get(DATE_FORMAT.format(day));
     }
-    
+
     public Map<String, List<Gig>> getGigsByDay() {
         return dayOfFestivalToGigs;
     }
@@ -130,6 +135,10 @@ public class RunningOrder {
 
     public List<Gig> getGigsOrdered() {
         return gigsOrdered;
+    }
+
+    public Festival getFestival() {
+        return festival;
     }
 
 }

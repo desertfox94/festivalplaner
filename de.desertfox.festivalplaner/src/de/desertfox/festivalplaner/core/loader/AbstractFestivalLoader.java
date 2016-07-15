@@ -1,11 +1,8 @@
 package de.desertfox.festivalplaner.core.loader;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.net.URL;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,12 +12,13 @@ import org.w3c.tidy.Tidy;
 import de.desertfox.festivalplaner.api.FestivalParseException;
 import de.desertfox.festivalplaner.api.IFestivalParser;
 import de.desertfox.festivalplaner.model.Festival;
+import de.desertfox.festivalplaner.model.Stage;
 
 public abstract class AbstractFestivalLoader implements IFestivalParser {
 
-	private static final Logger	logger	= LoggerFactory.getLogger(AbstractFestivalLoader.class);
-	protected Tidy				loader;
-	private Festival			festival;
+    private static final Logger logger = LoggerFactory.getLogger(AbstractFestivalLoader.class);
+    protected Tidy              loader;
+    private Festival            festival;
 
 	public AbstractFestivalLoader() {
 		init();
@@ -35,12 +33,16 @@ public abstract class AbstractFestivalLoader implements IFestivalParser {
 
 	@Override
 	public Festival parseFestival() throws FestivalParseException {
-		festival = new Festival();
+		festival = getFestival();
 		festival.setLineUp(parseLineUp());
 		festival.setRunningOrder(parseRunningOrder());
-		return null;
+		return festival;
 	}
-
+	
+	protected abstract Set<Stage> getStages();
+	
+	protected abstract String getName();
+	
 	protected Festival ensureFestivalLoaded() throws FestivalParseException {
 		if (festival == null) {
 			festival = parseFestival();
@@ -106,6 +108,10 @@ public abstract class AbstractFestivalLoader implements IFestivalParser {
 
 	@Override
 	public Festival getFestival() {
-		return festival;
+        if (festival == null) {
+            festival = new Festival(getName());
+            festival.setStages(getStages());
+        }
+        return festival;
 	}
 }

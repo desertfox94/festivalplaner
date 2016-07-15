@@ -1,0 +1,31 @@
+div.stageDiv {
+    position: relative;
+    display: inline-block;
+    width: 80px;
+    margin: 20px;
+    vertical-align: top;
+}
+
+div.stageContainer {
+    position: relative;
+    vertical-align: top;
+    padding-bottom: 50px;
+}
+
+div.gigDiv {
+    width: 80px;
+    vertical-align: top;
+    position: absolute;
+    border-radius: 25px;
+    border: 2px solid #73AD21;
+    padding: 10px;
+}
+
+div.gigDivColliding {
+    width: 80px;
+    vertical-align: top;
+    position: absolute;
+    border-radius: 25px;
+    border: 2px solid #ff6666;
+    padding: 10px;
+}

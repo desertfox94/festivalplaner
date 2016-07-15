@@ -30,7 +30,7 @@ public class PersonalRunnigOrderBuilder {
     }
 
     public static PersonalRunnnigOrder buildRunningOrder(List<Artist> artists, RunningOrder runningOrder) {
-        PersonalRunnnigOrder personalRunnnigOrder = new PersonalRunnnigOrder();
+        PersonalRunnnigOrder personalRunnnigOrder = new PersonalRunnnigOrder(runningOrder.getFestival());
         personalRunnnigOrder.setDaysOfFestival(runningOrder.getDaysOfFestival());
         for (Artist artist : artists) {
             Set<Gig> gigs = runningOrder.getGigs(artist);

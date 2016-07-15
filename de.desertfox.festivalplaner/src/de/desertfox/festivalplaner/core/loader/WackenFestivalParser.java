@@ -12,7 +12,9 @@ package de.desertfox.festivalplaner.core.loader;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +38,8 @@ public class WackenFestivalParser extends AbstractFestivalLoader {
     private static final Logger logger            = LoggerFactory.getLogger(WackenFestivalParser.class);
     public static final String  LINE_UP_URL       = "http://www.wacken.com/de/bands/bands-billing/";
     public static final String  RUNNING_ORDER_URL = "http://www.wacken.com/de/bands/running-order/";
-
+    public static final String  NAME              = "Wacken Open Air";
+    
     private Stage               wackinger         = new Stage("Wackinger Stage");
     private Stage               trueMetal         = new Stage("True Metal Stage");
     private Stage               black             = new Stage("Black Stage");
@@ -242,7 +245,7 @@ public class WackenFestivalParser extends AbstractFestivalLoader {
 
     @Override
     public RunningOrder parseRunningOrder() {
-        runningOrder = new RunningOrder();
+        runningOrder = new RunningOrder(getFestival());
         currentDay = -1;
         currentDayOfFestival = null;
         currentStage = null;
@@ -256,5 +259,24 @@ public class WackenFestivalParser extends AbstractFestivalLoader {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    protected Set<Stage> getStages() {
+        Set<Stage> stages = new HashSet<>(8);
+        stages.add(wackinger);
+        stages.add(trueMetal);
+        stages.add(black);
+        stages.add(wasteland);
+        stages.add(wet);
+        stages.add(party);
+        stages.add(beerGarden);
+        stages.add(headbangers);
+        return stages;
+    }
+
+    @Override
+    protected String getName() {
+        return NAME;
     }
 }

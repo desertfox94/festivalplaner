@@ -38,4 +38,17 @@ public class DateUtil {
         return arePeriodsColiding(gig1.getStartTime(), gig1.getEndTime(), gig2.getStartTime(), gig2.getEndTime());
     }
     
+    public static long calcDiffInMinutes(Date d1, Date d2) {
+        long l1 = d1.getTime();
+        long l2 = d2.getTime();
+        long diff;
+        if (l1 > l2) {
+            diff = l1 - l2;
+        } else {
+            diff = l2 - l1;
+        }
+        long diffMinutes = diff / (60 * 1000);
+        return diffMinutes;
+    }
+    
 }

@@ -14,6 +14,11 @@ public class Festival implements Serializable {
     private Set<Stage>        stages           = new HashSet<Stage>();
     private LineUp            lineUp;
     private RunningOrder      runningOrder;
+    private String            name;
+
+    public Festival(String name) {
+        this.name = name;
+    }
 
     public Set<Stage> getStages() {
         return stages;
@@ -31,12 +36,20 @@ public class Festival implements Serializable {
         this.lineUp = lineUp;
     }
 
+    public void addStage(Stage stage) {
+        stages.add(stage);
+    }
+
     public RunningOrder getRunningOrder() {
         return runningOrder;
     }
 
     public void setRunningOrder(RunningOrder runningOrder) {
         this.runningOrder = runningOrder;
+    }
+
+    public String getName() {
+        return name;
     }
 
 }

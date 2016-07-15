@@ -7,6 +7,10 @@ import java.util.Set;
 
 public class PersonalRunnnigOrder extends RunningOrder {
 
+    public PersonalRunnnigOrder(Festival festival) {
+        super(festival);
+    }
+
     private Map<Gig, Set<Gig>> gigToCollisions = new HashMap<>();
     private Set<Gig> gigsWithGapProblems = new HashSet<>();
 

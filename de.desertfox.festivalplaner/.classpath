@@ -13,5 +13,7 @@
 	<classpathentry kind="lib" path="lib/slf4j-api-1.7.9.jar"/>
 	<classpathentry kind="lib" path="lib/jansi-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/JCDP-1.25-win.jar"/>
+	<classpathentry kind="lib" path="lib/gagawa-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/joda-time-2.9.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

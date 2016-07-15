@@ -44,6 +44,7 @@ import de.desertfox.festivalplaner.core.loader.FestivalParserFactory.FestivalIde
 import de.desertfox.festivalplaner.model.Artist;
 import de.desertfox.festivalplaner.model.Gig;
 import de.desertfox.festivalplaner.model.PersonalRunnnigOrder;
+import de.desertfox.festivalplaner.ui.html.RunningOrderHtmlCreator;
 
 public class AppWindow {
 
@@ -125,30 +126,34 @@ public class AppWindow {
                     artists.add(artist);
                 }
                 PersonalRunnnigOrder runningOrder = PersonalRunnigOrderBuilder.buildRunningOrder(artists, currentFestivalParser);
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-                List<Date> daysOfFestival = runningOrder.getDaysOfFestival();
-                for (Date day : daysOfFestival) {
-                    cp.setForegroundColor(FColor.WHITE);
-                    cp.println("");
-                    cp.println(dateFormat.format(day));
-
-                    List<Gig> gigsByDay = runningOrder.getGigsByDay(day);
-                    if (gigsByDay.isEmpty()) {
-                        cp.println("<keine Bands>");
-                        continue;
-                    }
-                    for (Gig gig : gigsByDay) {
-                        if (runningOrder.isColliding(gig) && gig.getArtist().isFavorite()) {
-                            cp.println(gig.toString(), Attribute.NONE, FColor.MAGENTA, BColor.BLACK);
-                        } else if (runningOrder.isColliding(gig)) {
-                            cp.println(gig.toString(), Attribute.NONE, FColor.RED, BColor.BLACK);
-                        } else if (runningOrder.hasGapProblems(gig)) {
-                            cp.println(gig.toString(), Attribute.NONE, FColor.YELLOW, BColor.BLACK);
-                        } else {
-                            cp.println(gig.toString(), Attribute.NONE, FColor.GREEN, BColor.BLACK);
-                        }
-                    }
-                }
+                
+                RunningOrderHtmlCreator creator = new RunningOrderHtmlCreator();
+                creator.createHtml(currentFestivalParser.parseRunningOrder());
+                
+//                SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+//                List<Date> daysOfFestival = runningOrder.getDaysOfFestival();
+//                for (Date day : daysOfFestival) {
+//                    cp.setForegroundColor(FColor.WHITE);
+//                    cp.println("");
+//                    cp.println(dateFormat.format(day));
+//
+//                    List<Gig> gigsByDay = runningOrder.getGigsByDay(day);
+//                    if (gigsByDay.isEmpty()) {
+//                        cp.println("<keine Bands>");
+//                        continue;
+//                    }
+//                    for (Gig gig : gigsByDay) {
+//                        if (runningOrder.isColliding(gig) && gig.getArtist().isFavorite()) {
+//                            cp.println(gig.toString(), Attribute.NONE, FColor.MAGENTA, BColor.BLACK);
+//                        } else if (runningOrder.isColliding(gig)) {
+//                            cp.println(gig.toString(), Attribute.NONE, FColor.RED, BColor.BLACK);
+//                        } else if (runningOrder.hasGapProblems(gig)) {
+//                            cp.println(gig.toString(), Attribute.NONE, FColor.YELLOW, BColor.BLACK);
+//                        } else {
+//                            cp.println(gig.toString(), Attribute.NONE, FColor.GREEN, BColor.BLACK);
+//                        }
+//                    }
+//                }
             }
         });
         btnAuswahlAnwenden.setText("Auswahl anwenden");
